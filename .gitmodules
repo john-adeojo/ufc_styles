@@ -1,0 +1,3 @@
+[submodule "UFC-Predictions"]
+	path = UFC-Predictions
+	url = https://github.com/WarrierRajeev/UFC-Predictions.git
