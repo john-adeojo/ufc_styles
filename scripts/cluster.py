@@ -4,29 +4,34 @@ from umap import UMAP
 from hdbscan import HDBSCAN
 import plotly.express as px
 import plotly.graph_objects as go
+import gower
+
 
 
 class ClusterAnalysis:
-    def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean', cluster_dims=None, export_data=False):
+    def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, cluster_dims=None, export_data=False):
         self.dataframe = dataframe.copy()
         self.n_neighbors = n_neighbors
         self.min_cluster_size = min_cluster_size
         self.min_dist = min_dist
-        self.metric = metric
+        # self.metric = metric
         self.cluster_dims = cluster_dims
         self.weight_class = self.dataframe['weight_class'].drop_duplicates().values[0]
         self.export_data = export_data
 
 
     def perform_umap(self):
-        reducer = UMAP(n_neighbors=self.n_neighbors, min_dist=self.min_dist, metric=self.metric, random_state=42)
-        umap_data = reducer.fit_transform(self.dataframe[self.cluster_dims])
+        
+        data = self.dataframe[self.cluster_dims]
+        gower_distance_matrix = gower.gower_matrix(data)
+        reducer = UMAP(n_neighbors=self.n_neighbors, min_dist=self.min_dist, metric='precomputed', random_state=42)
+        umap_data = reducer.fit_transform(gower_distance_matrix)
         self.dataframe['x'] = umap_data[:, 0]
         self.dataframe['y'] = umap_data[:, 1]
 
     def perform_hdbscan(self):
         np.random.seed(42)
-        clusterer = HDBSCAN(min_cluster_size=self.min_cluster_size, metric=self.metric)
+        clusterer = HDBSCAN(min_cluster_size=self.min_cluster_size, metric='euclidean')
         self.dataframe['cluster'] = clusterer.fit_predict(self.dataframe[['x', 'y']])
         self.dataframe['specific_cluster'] = self.dataframe['cluster'].astype(str) + '_' + self.dataframe['weight_class']
         if self.export_data == True:
