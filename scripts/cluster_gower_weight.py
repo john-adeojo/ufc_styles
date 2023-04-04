@@ -39,10 +39,14 @@ class ClusterAnalysis:
         binary_column_indices = [data.columns.get_loc(col) for col in binary_columns]
 
         # Apply the weight factor to the binary columns in the Gower distance matrix
-        for i in range(gower_distance_matrix.shape[0]):
-            for j in range(gower_distance_matrix.shape[1]):
-                if i in binary_column_indices and j in binary_column_indices:
-                    gower_distance_matrix[i, j] *= self.weight_factor
+        # for i in range(gower_distance_matrix.shape[0]):
+        #     for j in range(gower_distance_matrix.shape[1]):
+        #         if i in binary_column_indices and j in binary_column_indices:
+        #             gower_distance_matrix[i, j] *= self.weight_factor
+        
+        for index in binary_column_indices:
+            gower_distance_matrix[:, index] *= self.weight_factor
+            gower_distance_matrix[index, :] *= self.weight_factor
 
         # Perform UMAP with the modified Gower distance matrix
         reducer = UMAP(n_neighbors=self.n_neighbors, min_dist=self.min_dist, metric='precomputed', random_state=42)
