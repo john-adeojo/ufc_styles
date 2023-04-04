@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 
 
 class ClusterAnalysis:
-    def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean', cluster_dims):
+    def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean', cluster_dims=None):
         self.dataframe = dataframe.copy()
         self.n_neighbors = n_neighbors
         self.min_cluster_size = min_cluster_size
@@ -33,10 +33,10 @@ class ClusterAnalysis:
         for cluster in unique_clusters:
             cluster_data = self.dataframe[self.dataframe['cluster'] == cluster]
             fig.add_trace(go.Scatter(x=cluster_data['x'], y=cluster_data['y'], mode='markers', name='Cluster ' + str(cluster),
-                                     marker=dict(size=6, opacity=0.4), hovertext=cluster_data['name'],
-                                     text=cluster_data['name'], textposition='top center', textfont=dict(size=10, color='black')))
+                                     marker=dict(size=6, opacity=0.4), hovertext=cluster_data['Fighter_dims'],
+                                     text=cluster_data['Fighter_dims'], textposition='top center', textfont=dict(size=10, color='black')))
 
-        fig.update_layout(title='Influence Clusters', showlegend=True, width=750, height=750)
+        fig.update_layout(title='Fighting Style Clusters', showlegend=True, width=750, height=750)
         fig.show()
 
     def run(self):
