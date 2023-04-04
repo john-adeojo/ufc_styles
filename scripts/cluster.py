@@ -7,16 +7,17 @@ import plotly.graph_objects as go
 
 
 class ClusterAnalysis:
-    def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean'):
+    def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean', cluster_dims):
         self.dataframe = dataframe.copy()
         self.n_neighbors = n_neighbors
         self.min_cluster_size = min_cluster_size
         self.min_dist = min_dist
         self.metric = metric
+        self.cluster_dims = cluster_dims
 
     def perform_umap(self):
         reducer = UMAP(n_neighbors=self.n_neighbors, min_dist=self.min_dist, metric=self.metric, random_state=42)
-        umap_data = reducer.fit_transform(self.dataframe[['favorite_count_pf_norm_mean', 'retweet_count_pf_norm_mean', 'quote_count_pf_norm_mean','reply_count_pf_norm_mean', 'anger',	'joy',	'optimism',	'sadness',	'negative',	'neutral',	'positive']])
+        umap_data = reducer.fit_transform(self.dataframe[self.cluster_dims])
         self.dataframe['x'] = umap_data[:, 0]
         self.dataframe['y'] = umap_data[:, 1]
 
