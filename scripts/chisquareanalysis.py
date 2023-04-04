@@ -26,9 +26,8 @@ class ChiSquareAnalysis:
         print("Chi2 Stat:", chi2_stat)
         print("P Value:", p_value)
         print("Degrees of Freedom:", dof)
-        print(contingency_table)
-        print(standardized_residuals)
+        # print(contingency_table)
+        # print(standardized_residuals)
         # print("Expected Frequency Table:")
         # print(ex)
-
         return standardized_residuals
