@@ -3,11 +3,15 @@ import numpy as np
 from scipy.stats import chi2_contingency
 
 class ChiSquareAnalysis:
-    def __init__(self, df):
-        self.df = df
+    def __init__(self, df, category):
+        self.df = df.copy()
+        self.category = category
 
     def run_chisquare_analysis(self, var):
-        contingency_table = pd.crosstab(self.df['specific_cluster'], self.df[var])
+        
+        self.df = self.df.loc[self.df['weight_class'] == self.category].copy()
+        
+        contingency_table = pd.crosstab(self.df['style_matchup'], self.df[var])
 
         # Perform the Chi-square test
         chi2_stat, p_value, dof, ex = chi2_contingency(contingency_table)
