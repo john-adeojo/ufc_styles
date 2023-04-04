@@ -28,8 +28,9 @@ class ClusterAnalysis:
         np.random.seed(42)
         clusterer = HDBSCAN(min_cluster_size=self.min_cluster_size, metric=self.metric)
         self.dataframe['cluster'] = clusterer.fit_predict(self.dataframe[['x', 'y']])
+        self.dataframe['specific_cluster'] = self.dataframe['cluster'].astype(str) + '_' + self.dataframe['weight_class']
         if self.export_data == True:
-            self.dataframe.to_csv(f"C:\\Users\\johna\\anaconda3\\envs\\ufc-env\\ufc_styles\\data\\02_intermediate\\fighter_cluster{ self.weight_class}.csv")
+            self.dataframe.to_csv(f"C:\\Users\\johna\\anaconda3\\envs\\ufc-env\\ufc_styles\\data\\02_intermediate\\fighter_cluster{ self.weight_class}.csv", index=False)
         
     
     def plot_scatter(self):
