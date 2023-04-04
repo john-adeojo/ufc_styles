@@ -9,7 +9,7 @@ import gower
 
 
 class ClusterAnalysis:
-    def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, cluster_dims=None, export_data=False):
+    def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, cluster_dims=None, export_data=False, weight_factor=1):
         self.dataframe = dataframe.copy()
         self.n_neighbors = n_neighbors
         self.min_cluster_size = min_cluster_size
@@ -18,12 +18,22 @@ class ClusterAnalysis:
         self.cluster_dims = cluster_dims
         self.weight_class = self.dataframe['weight_class'].drop_duplicates().values[0]
         self.export_data = export_data
+        self.weight_factor = weight_factor
 
 
     def perform_umap(self):
         
         data = self.dataframe[self.cluster_dims]
         gower_distance_matrix = gower.gower_matrix(data)
+        
+                # Identify the binary columns
+        binary_columns = ['Stance_Open Stance', 'Stance_Orthodox',	'Stance_Sideways',	'Stance_Southpaw',	'Stance_Switch']  # Fill this with the indices of binary columns in 'data'    
+        # Apply the weight factor to the binary columns in the Gower distance matrix
+        for i in range(gower_distance_matrix.shape[0]):
+            for j in range(gower_distance_matrix.shape[1]):
+                gower_distance_matrix[i, j] *= self.weight_factor if i in binary_columns and j in binary_columns else 1
+        
+        
         reducer = UMAP(n_neighbors=self.n_neighbors, min_dist=self.min_dist, metric='precomputed', random_state=42)
         umap_data = reducer.fit_transform(gower_distance_matrix)
         self.dataframe['x'] = umap_data[:, 0]
