@@ -3,13 +3,13 @@ import numpy as np
 from scipy.stats import chi2_contingency
 
 class ChiSquareAnalysis:
-    def __init__(self, df, category):
+    def __init__(self, df, weight_class):
         self.df = df.copy()
-        self.category = category
+        self.weight_class = weight_class
 
     def run_chisquare_analysis(self, var):
         
-        data = self.df.loc[self.df['weight_class'] == self.category].copy()
+        data = self.df.loc[self.df['weight_class'] == self.weight_class].copy()
         
         contingency_table = pd.crosstab(data['style_matchup'], data[var])
 
@@ -22,7 +22,7 @@ class ChiSquareAnalysis:
         #standardized_residuals.index.name = None
         standardized_residuals = standardized_residuals.reset_index()
         
-        print(self.category)
+        print(self.weight_class)
         print("Chi2 Stat:", chi2_stat)
         print("P Value:", p_value)
         print("Degrees of Freedom:", dof)
@@ -30,4 +30,7 @@ class ChiSquareAnalysis:
         # print(standardized_residuals)
         # print("Expected Frequency Table:")
         # print(ex)
-        return standardized_residuals
+        if p_value < 0.05:
+            return standardized_residuals, self.weight_class
+        else:
+            return 'Not significant', 'None'
